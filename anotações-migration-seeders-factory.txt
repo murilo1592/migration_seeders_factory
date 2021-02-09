@@ -1,0 +1,217 @@
+Migrations - https://laravel.com/docs/5.7/migrations
+
+/**********************************************
+
+// Alterar o nome de sua aplicação
+
+php artisan app:name <nome_aplicacao> 
+
+/**********************************************
+
+--Criando Primeira Migration
+
+php artisan make:migration <nome_migration>
+
+/**********************************************
+
+Criando Migration com Esquema de Criação de Tabela
+
+php artisan make:migration <nome_migration> --create=<nome_tabela>
+
+/**********************************************
+
+Altrando uma Tabela com Migration
+
+php artisan make:migration <nome_migration> --table=<nome_tabela>
+
+
+/**********************************************
+
+Criando Model e Migration
+
+php artisan make:model <nome_model> (primeira letra maíuscula) -m
+
+/**********************************************
+
+Executando Migrations
+
+php artisan migrate
+
+/**********************************************
+
+Criar Migration, Model e Controller
+
+php artisan make:model <nome> -rm
+
+/**********************************************
+
+Relacionar Tabelas
+
+$table->unsignedInteger('category');
+
+            $table->foreign('category') //nome da chave estrangeira
+                ->references('id') // referenciando ao campo id
+                ->on('categories') // da tabela categories
+                ->onDelete('cascade'); // auto delete
+
+/**********************************************
+
+Inserindo Dados no Banco de Dados
+
+use Illuminate\Support\Facades;
+
+class InsertUserAdmin extends Migration
+{
+    public function up()
+    {
+        $email = env('ADMIN_EMAIL', 'murilomha92@live.com');
+        $password = bcrypt(env('ADMIN_PASSWORD', 'murilomattos'));
+
+        DB::table('users')->insert([
+            'name' => 'Murilo',
+            'email' => $email,
+            'password' => $password
+        ]);
+    }
+
+    public function down()
+    {
+        $email = env('ADMIN_EMAIL', 'murilomha92@live.com');
+        DB::delete('DELETE FROM users WHERE email = ?', [$email]);
+    }
+}
+
+/**********************************************
+
+Reverter Migrations
+
+php artisan migrate:rollback
+
+/**********************************************
+
+Reverter Última Migration
+
+php artisan migrate:rollback --step=1
+
+/**********************************************
+
+Reverter Últimas 3 Migration
+
+php artisan migrate:rollback --step=3
+
+/**********************************************
+
+Executar métodos down e em seguida métodos up
+
+php artisan migrate:refresh --step=1
+
+/**********************************************
+
+Deletar Tabelas Executar Migrations
+
+php artisan migrate:fresh
+
+/**********************************************
+
+Seeders - https://laravel.com/docs/5.7/seeding
+
+/**********************************************
+
+Criando Primeira Seeders
+
+php artisan make:seeder <nome_seeder>
+
+/**********************************************
+
+Executando Seeders
+
+php artisan db:seed
+
+/**********************************************
+
+Executando Seeders Individuais
+
+php artisan db:seed --class=<nome_class> "EX: UsersTableSeeder"
+
+/**********************************************
+
+Refresh de Migrantion e execução de seeders
+
+php artisan migrate:refresh --seed
+
+/**********************************************
+
+Dropando migrations e executando tudo novamente com seedes
+
+php artisan migrate:fresh --seed
+
+
+/**********************************************
+
+Gerando Informações com Faker
+
+php artisan make:factory PostFactory
+
+use Faker\Generator as Faker;
+
+$factory->define(\LaraDev\Posts::class, function (Faker $faker) {
+
+    $title = $faker->sentence(10);
+
+    return [
+        'title' => $title,
+        'subtitle' => $faker->sentence(10),
+        'description' => $faker->paragraph(5),
+        'publish_at' => $faker->dateTime(),
+        'slug' => str_slug($title),
+        'category' => function(){
+            return factory(\LaraDev\Categories::class)->create()->id;
+        }
+    ];
+});
+
+/**********************************************
+
+Criando Factory de Cateogories
+
+php artisan make:factory CategoriesFactory
+
+use Faker\Generator as Faker;
+
+$factory->define(\LaraDev\Categories::class, function (Faker $faker) {
+
+    $title = $faker->sentence(3);
+
+    return [
+        'title' => $title,
+        'slug' => str_slug($title)
+    ];
+});
+
+/**********************************************
+
+Criando Seeder para executar as Factory
+
+php artisan make:seeder PostsTableSeeder
+
+use Illuminate\Database\Seeder;
+
+class PostsTableSeeder extends Seeder
+{
+    public function run()
+    {
+        factory(\LaraDev\Posts::class, 50)->create();
+
+	// O número 50 representa a quantidade de registros a ser criados
+    }
+}
+
+/**********************************************
+
+Executando Seeder por class
+
+php artisan db:seed --class=<nome_class_seeder> "Ex: PostsTableSeeder"
+
+
+
+
